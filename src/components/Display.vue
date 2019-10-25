@@ -1,18 +1,18 @@
 <template>
     <div>
-        <h2 class="title">Available budget {{ totalsArr.inc + totalsArr.exp }} €</h2>
+        <h2 class="title">Available budget {{ getTotals(totalsArr.inc) + getTotals(totalsArr.exp) }} €</h2>
         <div class="container">
             <div class="row justify-content-around">
                 <div class="col-lg-4 pos-col col-display">
                     <div class="row justify-content-between">
                         <div class="col-5">Total Income:</div>
-                        <div class="col-5">{{ totalsArr.inc }} €</div>
+                        <div class="col-5">{{ getTotals(totalsArr.inc) }} €</div>
                     </div>
                 </div>
                 <div class="col-lg-4 neg-col col-display">
                     <div class="row justify-content-between">
                         <div class="col-5">Total Expenses:</div>
-                        <div class="col-5">{{ totalsArr.exp }} €</div>
+                        <div class="col-5">{{ getTotals(totalsArr.exp) }} €</div>
                     </div>
                 </div>
             </div>
@@ -24,13 +24,16 @@
     export default {
         data() {
             return {
-
+                
             }
         },
         methods: {
-            sum(a, b) {
-                return(a + b);
-            }
+            getTotals(numArr) {
+                return numArr.reduce(this.reducer);
+            },
+            reducer(total, num) {
+                return total + num;
+            },
         },
         props: ['totalsArr'],
     }
@@ -52,7 +55,7 @@
     }
     .title {
         margin: auto;
-        width: 30%;
+        width: 40%;
         padding: 10px;
     }
 </style>

@@ -25,7 +25,6 @@
                             <div class="col-2 cBorder">{{ el.id }}</div>
                             <div class="col-6 cBorder">{{ el.description }}</div>
                             <div class="col-4 cBorder">{{ el.value }} €</div>
-                            <!-- <div class="col-2 cBorder">24%</div> -->
                         </div>
                     </li>
                 </div>

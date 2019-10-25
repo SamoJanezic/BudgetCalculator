@@ -40,11 +40,12 @@
                         inc: [],
                     },
                     totals: {
-                        exp: 0,
-                        inc: 0,
+                        exp: [],
+                        inc: [],
                     }
                 },
-                userLogin: false,
+                userLogin: true,
+                testData: [35, 45, 15, 5],
             }
         },
         components: {
@@ -53,20 +54,31 @@
             appList: List,
         },
         methods: {
+            sortResponse(el) {
+                el.forEach(element => {
+                    console.log(element);
+                    if (element['value'] < 0) {
+                        this.allData.allItems.exp.push(element);
+                        this.allData.totals.exp.push(parseFloat(element['value']));
+                    } else {
+                        this.allData.allItems.inc.push(element);
+                        this.allData.totals.inc.push(parseFloat(element['value']));
+                    }
+                });
+
+            },
             deleteItem(index, el) {
                 el.splice(index, 1);
-            },
-            getTotals() {
-                console.log('value');
-                // let arr = [5,6,7];
-                // const reducer = (a, b) => a + b;
-                // console.log(arr.reduce(reducer));
             },
             switchStatus() {
                 this.userLogin = !this.userLogin;
                 console.log(this.userLogin);
             }
         },
+        mounted() {
+            axios.get('http://127.0.0.1:8000/api/budgets')
+            .then(response => this.sortResponse(response.data.data))
+        }
     }
 </script>
 
