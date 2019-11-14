@@ -13,7 +13,7 @@
             <div class="col-md-2">
                 <input type="number" size="4" placeholder="Value" v-model="value">
             </div>
-            <button class="col-md-1" @click="createItem(); getTotals()">Submit</button>
+            <button class="col-md-1" @click="sendData()">Submit</button>
         </div>
     </div>
 </template>
@@ -28,29 +28,31 @@
             }
         },
         methods: {
-            createItem() {
-                if (this.description === '' || this.value === ''){
-                    return;
-                }
-                if (this.typeOf === 'income') {
-                    this.budgetData.allItems.inc.push(new Income(this.getId(this.budgetData.allItems.inc.length), this.description, this.value));
-                    this.budgetData.totals.inc += parseInt(this.value);
-                } else {
-                    this.budgetData.allItems.exp.push(new Expense(this.getId(this.budgetData.allItems.exp.length), this.description, this.value));
-                    this.budgetData.totals.exp -= parseInt(this.value);
-                }
+            // createItem() {
+            //     if (this.description === '' || this.value === ''){
+            //         return;
+            //     }
+            //     if (this.typeOf === 'income') {
+            //         this.budgetData.allItems.inc.push(new Income(this.getId(this.budgetData.allItems.inc.length), this.description, this.value));
+            //         this.budgetData.totals.inc += parseInt(this.value);
+            //     } else {
+            //         this.budgetData.allItems.exp.push(new Expense(this.getId(this.budgetData.allItems.exp.length), this.description, this.value));
+            //         this.budgetData.totals.exp -= parseInt(this.value);
+            //     }
+            //     this.description = '';
+            //     this.value = '';
+            // },
+            // getId(type) {
+            //     if(type === 0) {
+            //         return 1;
+            //     } else {
+            //         return type + 1;
+            //     }
+            // },
+            sendData() {
+                this.$emit('wasSend', [this.typeOf, this.description, this.value]);
                 this.description = '';
                 this.value = '';
-            },
-            getId(type) {
-                if(type === 0) {
-                    return 1;
-                } else {
-                    return type + 1;
-                }
-            },
-            getTotals() {
-                this.$emit('totalsGot', this.value);
             }
         },
         props: ['budgetData'],

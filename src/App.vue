@@ -2,15 +2,15 @@
     <div v-if="userLogin">
         <div class="main">
             <app-display
-                :totalsArr="allData.totals"
+                :totalsArr="budgetData.totals"
             ></app-display>
             <app-input
-                :budgetData="allData"
-                @totalsGot="getTotals"
+                :budgetData="budgetData"
+                @wasSend="checkData"
             ></app-input>
             <app-list
-                :budgetData="allData"
-                @itemDeleted="deleteItem"
+                :budgetData="budgetData"
+                @itemDeleted="deleteFromBudget"
             ></app-list>
         </div>
     </div>
@@ -34,7 +34,7 @@
     export default {
         data() {
             return {
-                allData: {
+                budgetData: {
                     allItems: {
                         exp: [],
                         inc: [],
@@ -45,7 +45,6 @@
                     }
                 },
                 userLogin: true,
-                testData: [35, 45, 15, 5],
             }
         },
         components: {
@@ -56,28 +55,69 @@
         methods: {
             sortResponse(el) {
                 el.forEach(element => {
-                    console.log(element);
                     if (element['value'] < 0) {
-                        this.allData.allItems.exp.push(element);
-                        this.allData.totals.exp.push(parseFloat(element['value']));
+                        this.budgetData.allItems.exp.push(element);
+                        this.budgetData.totals.exp.push(parseFloat(element['value']));
                     } else {
-                        this.allData.allItems.inc.push(element);
-                        this.allData.totals.inc.push(parseFloat(element['value']));
+                        this.budgetData.allItems.inc.push(element);
+                        this.budgetData.totals.inc.push(parseFloat(element['value']));
                     }
                 });
 
             },
-            deleteItem(index, el) {
-                el.splice(index, 1);
-            },
             switchStatus() {
                 this.userLogin = !this.userLogin;
                 console.log(this.userLogin);
+            },
+            resetBudgetData() {
+                this.budgetData.allItems.inc = [];
+                this.budgetData.allItems.exp = [];
+                this.budgetData.totals.inc = [];
+                this.budgetData.totals.exp = [];
+            },
+            getBudget() {
+                axios.get('http://127.0.0.1:8000/api/budgets')
+                .then(response => this.sortResponse(response.data.data))
+            },
+            postBudget(description, value) {
+                axios({
+                    method: 'post',
+                    url: 'http://127.0.0.1:8000/api/budget',
+                    data: {
+                        description: description,
+                        value: value
+                    },
+                })
+                .then((response) => {
+                    if (response) {
+                        this.resetBudgetData();
+                        this.getBudget();
+                    }
+                });
+                // .then(this.resetBudgetData())
+                // .then(this.getBudget());
+            },
+            deleteFromBudget(id) {
+                axios({
+                    method: 'delete',
+                    url: `http://127.0.0.1:8000/api/budget/${id}`,
+                })
+                .then((response) => {
+                    if (response) {
+                        this.resetBudgetData();
+                        this.getBudget();
+                    }
+                });
+            },
+            checkData(dataFromInput) {
+                if (dataFromInput[0] === 'expense') {
+                    dataFromInput[2] = -dataFromInput[2];
+                }
+                this.postBudget(dataFromInput[1], dataFromInput[2]);
             }
         },
         mounted() {
-            axios.get('http://127.0.0.1:8000/api/budgets')
-            .then(response => this.sortResponse(response.data.data))
+            this.getBudget();
         }
     }
 </script>

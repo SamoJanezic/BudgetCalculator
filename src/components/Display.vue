@@ -24,12 +24,16 @@
     export default {
         data() {
             return {
-                
+
             }
         },
         methods: {
             getTotals(numArr) {
-                return numArr.reduce(this.reducer);
+                if (numArr.length === 0) {
+                    return 0;
+                } else {
+                    return numArr.reduce(this.reducer);
+                }
             },
             reducer(total, num) {
                 return total + num;
